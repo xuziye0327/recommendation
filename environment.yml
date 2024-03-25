@@ -1,0 +1,11 @@
+name: neo4j
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - openjdk=21.0.2
+  - python=3.12
+  - pip=24.0
+  - pip:
+    - neo4j==5.18.0
+    - pandas==2.2.1
