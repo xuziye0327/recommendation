@@ -3,6 +3,7 @@ import datetime
 import neo4j
 
 import dataset
+import neo4j_client
 
 
 def create_rating_relationship(s: neo4j.Session, rating):
@@ -20,9 +21,17 @@ def create_rating_relationship(s: neo4j.Session, rating):
     )
 
 
-def build(s: neo4j.Session):
+def _parallel_build(t):
+    _, rating = t
+    with neo4j_client.new_session() as s:
+        create_rating_relationship(s, rating)
+
+
+def build():
     df = dataset.ratings()
 
     print("building rating info...")
-    for _, rating in df.iterrows():
-        create_rating_relationship(s, rating)
+
+    import multiprocessing as mp
+
+    mp.Pool().map(_parallel_build, df.iterrows())

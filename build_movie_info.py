@@ -52,14 +52,15 @@ def create_director_relationship(s: neo4j.Session, movie):
         )
 
 
-def build(s: neo4j.Session):
+def build():
     df = pd.merge(dataset.movies_metadata(), dataset.credits(), on="id")
 
     print("building movie info...")
-    for _, movie in df.iterrows():
-        create_movie_node(s, movie)
-        create_cast_relationship(s, movie)
-        create_director_relationship(s, movie)
+    with neo4j_client.new_session() as s:
+        for _, movie in df.iterrows():
+            create_movie_node(s, movie)
+            create_cast_relationship(s, movie)
+            create_director_relationship(s, movie)
 
 
 if __name__ == "__main__":
